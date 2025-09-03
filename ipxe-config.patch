@@ -1,0 +1,59 @@
+diff --git i/src/config/general.h w/src/config/general.h
+index 683c02ffb..153b6d703 100644
+--- i/src/config/general.h
++++ w/src/config/general.h
+@@ -56,7 +56,7 @@ FILE_LICENCE ( GPL2_OR_LATER_OR_UBDL );
+ 
+ #define	DOWNLOAD_PROTO_TFTP	/* Trivial File Transfer Protocol */
+ #define	DOWNLOAD_PROTO_HTTP	/* Hypertext Transfer Protocol */
+-#undef	DOWNLOAD_PROTO_HTTPS	/* Secure Hypertext Transfer Protocol */
++#define	DOWNLOAD_PROTO_HTTPS	/* Secure Hypertext Transfer Protocol */
+ #undef	DOWNLOAD_PROTO_FTP	/* File Transfer Protocol */
+ #undef	DOWNLOAD_PROTO_SLAM	/* Scalable Local Area Multicast */
+ #undef	DOWNLOAD_PROTO_NFS	/* Network File System Protocol */
+@@ -127,7 +127,7 @@ FILE_LICENCE ( GPL2_OR_LATER_OR_UBDL );
+ #define	IMAGE_PEM		/* PEM image support */
+ //#define	IMAGE_EFISIG		/* EFI signature list image support */
+ //#define	IMAGE_ZLIB		/* ZLIB image support */
+-//#define	IMAGE_GZIP		/* GZIP image support */
++#define	IMAGE_GZIP		/* GZIP image support */
+ //#define	IMAGE_UCODE		/* Microcode update image support */
+ 
+ /*
+@@ -150,29 +150,29 @@ FILE_LICENCE ( GPL2_OR_LATER_OR_UBDL );
+ #define LOGIN_CMD		/* Login command */
+ #define SYNC_CMD		/* Sync command */
+ #define SHELL_CMD		/* Shell command */
+-//#define NSLOOKUP_CMD		/* DNS resolving command */
+-//#define TIME_CMD		/* Time commands */
++#define NSLOOKUP_CMD		/* DNS resolving command */
++#define TIME_CMD		/* Time commands */
+ //#define DIGEST_CMD		/* Image crypto digest commands */
+ //#define LOTEST_CMD		/* Loopback testing commands */
+ //#define VLAN_CMD		/* VLAN commands */
+ //#define PXE_CMD		/* PXE commands */
+-//#define REBOOT_CMD		/* Reboot command */
++#define REBOOT_CMD		/* Reboot command */
+ //#define POWEROFF_CMD		/* Power off command */
+-//#define IMAGE_TRUST_CMD	/* Image trust management commands */
++#define IMAGE_TRUST_CMD	/* Image trust management commands */
+ //#define IMAGE_CRYPT_CMD	/* Image encryption management commands */
+ //#define PCI_CMD		/* PCI commands */
+ //#define PARAM_CMD		/* Request parameter commands */
+ //#define NEIGHBOUR_CMD		/* Neighbour management commands */
+-//#define PING_CMD		/* Ping command */
++#define PING_CMD		/* Ping command */
+ //#define CONSOLE_CMD		/* Console command */
+ //#define IPSTAT_CMD		/* IP statistics commands */
+ //#define PROFSTAT_CMD		/* Profiling commands */
+ //#define NTP_CMD		/* NTP commands */
+-//#define CERT_CMD		/* Certificate management commands */
++#define CERT_CMD		/* Certificate management commands */
+ //#define IMAGE_MEM_CMD		/* Read memory command */
+ #define IMAGE_ARCHIVE_CMD	/* Archive image management commands */
+ #define SHIM_CMD		/* EFI shim command (or dummy command) */
+-//#define USB_CMD		/* USB commands */
++#define USB_CMD		/* USB commands */
+ //#define FDT_CMD		/* Flattened Device Tree commands */
+ 
+ /*

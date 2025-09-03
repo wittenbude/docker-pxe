@@ -1,0 +1,32 @@
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-ipxe:
+    name: Build iPXE
+    permissions:
+      contents: read
+    uses: ./.github/workflows/build-ipxe.yml
+    with:
+      artifact-prefix: ipxe-
+
+  build-pxelinux:
+    name: Build PXELINUX
+    permissions:
+      contents: read
+    uses: ./.github/workflows/build-pxelinux.yml
+
+  publish:
+    name: Publish Docker Image
+    if: ${{ github.event_name == 'push' }}
+    needs: [ build-ipxe, build-pxelinux ]
+    permissions:
+      contents: read
+      packages: write
+    uses: codello/.github/.github/workflows/docker-publish.yml@v1
+    with:
+      platforms: linux/arm64,linux/amd64
+      artifact-pattern: "*"
+      path: .
+      image: wittenbude/pxe

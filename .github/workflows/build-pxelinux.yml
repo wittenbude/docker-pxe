@@ -1,0 +1,48 @@
+on:
+  workflow_call:
+    inputs:
+      artifact-name:
+        description: "Name for the generated artifact."
+        type: string
+        required: false
+        default: "pxelinux"
+
+env:
+  SYSLINUX_VERSION: "6.03"
+
+jobs:
+  pxelinux:
+    name: Build pxelinux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Code
+        uses: actions/checkout@v5
+      - name: Download PXELINUX
+        run: curl -fsSL https://www.kernel.org/pub/linux/utils/boot/syslinux/syslinux-"$SYSLINUX_VERSION".tar.gz | tar --transform "s/^syslinux-$SYSLINUX_VERSION/syslinux/" -xzf -
+      - name: Extract PXE Files
+        run: |
+          shopt -s globstar
+          mkdir -p pxelinux/bios
+          mv syslinux/bios/core/pxelinux.0 \
+            syslinux/bios/core/lpxelinux.0 \
+            syslinux/bios/**/*.c32 \
+            syslinux/bios/memdisk/memdisk \
+            ./pxelinux/bios
+
+          mkdir -p pxelinux/efi32
+          mv syslinux/efi32/efi/syslinux.efi \
+            syslinux/efi32/**/*.c32 \
+            ./pxelinux/efi32
+
+          mkdir -p pxelinux/efi64
+          mv syslinux/efi64/efi/syslinux.efi \
+            syslinux/efi64/**/*.c32 \
+            ./pxelinux/efi64
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: |
+            pxelinux/
+            .keep-directory-structure
+          retention-days: 1
