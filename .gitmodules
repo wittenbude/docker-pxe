@@ -1,0 +1,6 @@
+[submodule "ipxe"]
+	path = ipxe
+	url = https://github.com/ipxe/ipxe.git
+[submodule "syslinux"]
+	path = syslinux
+	url = http://repo.or.cz/syslinux.git
