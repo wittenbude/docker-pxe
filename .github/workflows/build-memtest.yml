@@ -21,22 +21,23 @@ jobs:
           - arch: i586
             dir: build32
             toolchain: x86_64-linux-gnux32
-            packages: libc6-dev-i386-x32-cross
           - arch: x86_64
             dir: build64
             toolchain: x86_64-linux-gnu
     env:
-      ARTIFACT: memtest/${{ matrix.arch }}/mt86plus
+      ARTIFACT: memtest/${{ matrix.arch }}/memtest
     steps:
       - name: Check out Code
         uses: actions/checkout@v5
         with:
           submodules: true
       - name: Setup Toolchain
-        run: sudo apt-get update && sudo apt-get install --yes "${PACKAGE/_/-}" $PACKAGES dosfstools mtools
+        run: sudo apt-get update && sudo apt-get install --yes "${PACKAGE/_/-}" dosfstools mtools
         env:
           PACKAGE: gcc-${{ matrix.toolchain }}
-          PACKAGES: ${{ matrix.packages }}
+      - name: Install Additional Packages
+        if: matrix.arch == 'i586'
+        run: sudo apt-get install libc6-dev-i386
       - name: Get Memtest Release
         working-directory: ./memtest
         id: memtest
@@ -52,7 +53,7 @@ jobs:
 
           # Rename output file to $ARTIFACT, as is expected by the Dockerfile
           mkdir -p "$(dirname "$ARTIFACT")"
-          mv "$BUILD/memtest.bin" "$ARTIFACT"
+          mv "$BUILD/memtest.bin" "$ARTIFACT.bin"
           mv "$BUILD/memtest.efi" "$ARTIFACT.efi"
         env:
           BUILD: memtest/${{ matrix.dir }}

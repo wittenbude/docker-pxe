@@ -1,0 +1,9 @@
+#!ipxe
+
+dhcp
+
+menu Please choose
+item memtest MemTest86+
+choose os
+
+chain memtest/x86_64/memtest.efi
