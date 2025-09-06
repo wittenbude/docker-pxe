@@ -4,3 +4,4 @@
 [submodule "memtest"]
 	path = memtest
 	url = https://github.com/memtest86plus/memtest86plus
+	branch = v7.20
