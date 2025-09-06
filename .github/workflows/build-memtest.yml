@@ -21,6 +21,7 @@ jobs:
           - arch: i586
             dir: build32
             toolchain: x86_64-linux-gnux32
+            packages: libc6-dev-i386-x32-cross
           - arch: x86_64
             dir: build64
             toolchain: x86_64-linux-gnu
@@ -32,9 +33,10 @@ jobs:
         with:
           submodules: true
       - name: Setup Toolchain
-        run: sudo apt-get update && sudo apt-get install --yes "${PACKAGE/_/-}" dosfstools mtools
+        run: sudo apt-get update && sudo apt-get install --yes "${PACKAGE/_/-}" $PACKAGES dosfstools mtools
         env:
           PACKAGE: gcc-${{ matrix.toolchain }}
+          PACKAGES: ${{ matrix.packages }}
       - name: Get Memtest Release
         working-directory: ./memtest
         id: memtest
