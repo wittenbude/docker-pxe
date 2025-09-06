@@ -1,0 +1,11 @@
+DEFAULT    menu.c32
+MENU TITLE Default PXELINUX Boot Menu
+TIMEOUT    100
+
+LABEL      local
+MENU LABEL Local ^HDD
+LOCALBOOT  0
+
+LABEL      memtest
+MENU LABEL Memtest86+
+KERNEL     memtest/mt86plus

@@ -31,11 +31,13 @@ jobs:
 
           mkdir -p pxelinux/efi32
           mv syslinux/efi32/efi/syslinux.efi \
+            syslinux/efi32/**/ldlinux.e32 \
             syslinux/efi32/**/*.c32 \
             ./pxelinux/efi32
 
           mkdir -p pxelinux/efi64
           mv syslinux/efi64/efi/syslinux.efi \
+            syslinux/efi64/**/ldlinux.e64 \
             syslinux/efi64/**/*.c32 \
             ./pxelinux/efi64
       - name: Upload Artifact

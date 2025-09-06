@@ -1,3 +1,6 @@
 [submodule "ipxe"]
 	path = ipxe
 	url = https://github.com/ipxe/ipxe.git
+[submodule "memtest"]
+	path = memtest
+	url = https://github.com/memtest86plus/memtest86plus

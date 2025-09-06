@@ -17,10 +17,16 @@ jobs:
       contents: read
     uses: ./.github/workflows/build-pxelinux.yml
 
+  build-memtest:
+    name: Build MemTest86+
+    permissions:
+      contents: read
+    uses: ./.github/workflows/build-memtest.yml
+
   publish:
     name: Publish Docker Image
     if: ${{ github.event_name == 'push' }}
-    needs: [ build-ipxe, build-pxelinux ]
+    needs: [ build-ipxe, build-pxelinux, build-memtest ]
     permissions:
       contents: read
       packages: write

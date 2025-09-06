@@ -53,7 +53,7 @@ jobs:
             toolchain: x86_64-linux-gnu
     env:
       TARGET: bin-${{ matrix.arch }}-${{ matrix.platform }}${{ matrix.sb }}/${{ matrix.driver }}.${{ matrix.extension }}
-      ARTIFACT: ipxe/build/${{ matrix.arch }}/${{ matrix.driver }}${{ matrix.sb }}.${{ matrix.extension }}
+      ARTIFACT: ipxe/${{ matrix.arch }}/${{ matrix.driver }}${{ matrix.sb }}.${{ matrix.extension }}
     steps:
       - name: Check out Code
         uses: actions/checkout@v5
@@ -62,20 +62,30 @@ jobs:
       - # We need to unshallow iPXE for version number calculation
         name: Unshallow iPXE
         working-directory: ./ipxe
-        run: git fetch --unshallow
+        id: ipxe
+        run: |
+          git fetch --unshallow
+          echo "commit=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
       - name: Setup Toolchain
         run: sudo apt-get update && sudo apt-get install --yes "${PACKAGE/_/-}" liblzma-dev mtools
         env:
           PACKAGE: gcc-${{ matrix.toolchain }}
-      - name: Build Target
+      - name: Setup Cache
+        uses: actions/cache@v4
+        with:
+          path: ipxe/src/bin-${{ matrix.arch }}-${{ matrix.platform }}${{ matrix.sb }}
+          key: ipxe-${{ matrix.arch }}-${{ matrix.platform }}${{ matrix.sb }}-${{ steps.ipxe.outputs.commit }}
+      - name: Build iPXE
         working-directory: ./ipxe/src
         run: |
           git apply "$GITHUB_WORKSPACE/ipxe-config.patch"
           make -j$(nproc) "$TARGET"
+
+          # Rename $TARGET to $ARTIFACT, as is expected by the Dockerfile
+          mkdir -p $(dirname "$ARTIFACT")
+          mv "ipxe/src/$TARGET" "$ARTIFACT"
         env:
           CROSS: ${{ matrix.toolchain }}-
-      - name: Rename Target
-        run: mkdir -p $(dirname "$ARTIFACT") && mv "ipxe/src/$TARGET" "$ARTIFACT"
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
