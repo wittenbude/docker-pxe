@@ -66,6 +66,7 @@ jobs:
         run: |
           git fetch --unshallow
           echo "commit=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+          git apply "$GITHUB_WORKSPACE/ipxe-config.patch"
       - name: Setup Toolchain
         run: sudo apt-get update && sudo apt-get install --yes "${PACKAGE/_/-}" liblzma-dev mtools
         env:
@@ -76,15 +77,14 @@ jobs:
           path: ipxe/src/bin-${{ matrix.arch }}-${{ matrix.platform }}${{ matrix.sb }}
           key: ipxe-${{ matrix.arch }}-${{ matrix.platform }}${{ matrix.sb }}-${{ steps.ipxe.outputs.commit }}
       - name: Build iPXE
-        working-directory: ./ipxe/src
         run: |
-          git apply "$GITHUB_WORKSPACE/ipxe-config.patch"
-          make -j$(nproc) "$TARGET"
+          make -C "$BUILD" -j$(nproc) "$TARGET"
 
           # Rename $TARGET to $ARTIFACT, as is expected by the Dockerfile
-          mkdir -p $(dirname "$ARTIFACT")
-          mv "ipxe/src/$TARGET" "$ARTIFACT"
+          mkdir -p "$(dirname "$ARTIFACT")"
+          mv "$BUILD/$TARGET" "$ARTIFACT"
         env:
+          BUILD: ipxe/src
           CROSS: ${{ matrix.toolchain }}-
       - name: Upload Artifact
         uses: actions/upload-artifact@v4

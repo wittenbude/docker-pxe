@@ -45,15 +45,15 @@ jobs:
           path: memtest/${{ matrix.dir }}
           key: memtest-${{ matrix.arch }}-${{ steps.memtest.outputs.commit }}
       - name: Build MemTest86+
-        working-directory: ./memtest/${{ matrix.dir }}
         run: |
-          make -j$(nproc) memtest.bin memtest.efi
+          make -C "$BUILD" -j$(nproc) memtest.bin memtest.efi
 
           # Rename output file to $ARTIFACT, as is expected by the Dockerfile
-          mkdir -p $(dirname "$ARTIFACT")
-          mv "memtest/${{ matrix.dir }}/memtest.bin" "$ARTIFACT"
-          mv "memtest/${{ matrix.dir }}/memtest.efi" "$ARTIFACT.efi"
+          mkdir -p "$(dirname "$ARTIFACT")"
+          mv "$BUILD/memtest.bin" "$ARTIFACT"
+          mv "$BUILD/memtest.efi" "$ARTIFACT.efi"
         env:
+          BUILD: memtest/${{ matrix.dir }}
           CC: ${{ matrix.toolchain }}-gcc
           LD: ${{ matrix.toolchain }}-ld
           OBJCOPY: ${{ matrix.toolchain }}-objcopy
