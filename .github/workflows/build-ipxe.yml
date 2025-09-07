@@ -57,18 +57,22 @@ jobs:
     steps:
       - name: Check out Code
         uses: actions/checkout@v5
-        with:
-          submodules: true
+      - name: Check out iPXE
+        run: git submodule update --init ipxe
       - # We need to unshallow iPXE for version number calculation
-        name: Unshallow iPXE
+        name: Configure iPXE
         working-directory: ./ipxe
         id: ipxe
         run: |
-          git fetch --unshallow
+          shopt -s nullglob
           echo "commit=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
-          git apply "$GITHUB_WORKSPACE/ipxe-config.patch"
+          echo "" | git apply --allow-empty "$GITHUB_WORKSPACE"/patches/ipxe/*.patch
       - name: Setup Toolchain
-        run: sudo apt-get update && sudo apt-get install --yes "${PACKAGE/_/-}" liblzma-dev mtools
+        # See https://askubuntu.com/a/1437819
+        run: |
+          echo "set man-db/auto-update false" | sudo debconf-communicate
+          sudo dpkg-reconfigure man-db
+          sudo apt-get update && sudo apt-get install --yes "${PACKAGE/_/-}" liblzma-dev mtools
         env:
           PACKAGE: gcc-${{ matrix.toolchain }}
       - name: Setup Cache

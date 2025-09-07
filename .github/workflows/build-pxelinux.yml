@@ -1,50 +1,69 @@
 on:
   workflow_call:
     inputs:
-      artifact-name:
+      artifact-prefix:
         description: "Name for the generated artifact."
         type: string
         required: false
-        default: "pxelinux"
-
-env:
-  SYSLINUX_VERSION: "6.03"
+        default: "pxelinux-"
 
 jobs:
   pxelinux:
-    name: Build pxelinux
+    name: Build ${{ matrix.target }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [bios, efi32, efi64]
+        include:
+          - target: efi32
+            artifacts: efi/syslinux.efi **/ldlinux.e32
+          - target: efi64
+            artifacts: efi/syslinux.efi **/ldlinux.e64
     steps:
       - name: Check out Code
         uses: actions/checkout@v5
-      - uses: mxschmitt/action-tmate@v3
-      - name: Download PXELINUX
-        run: curl -fsSL https://www.kernel.org/pub/linux/utils/boot/syslinux/syslinux-"$SYSLINUX_VERSION".tar.gz | tar --transform "s/^syslinux-$SYSLINUX_VERSION/syslinux/" -xzf -
-      - name: Extract PXE Files
+      - name: Check out Syslinux
         run: |
-          shopt -s globstar
-          mkdir -p pxelinux/bios
-          mv syslinux/bios/core/pxelinux.0 \
-            syslinux/bios/core/lpxelinux.0 \
-            syslinux/bios/**/*.c32 \
-            syslinux/bios/memdisk/memdisk \
-            ./pxelinux/bios
-
-          mkdir -p pxelinux/efi32
-          mv syslinux/efi32/efi/syslinux.efi \
-            syslinux/efi32/**/ldlinux.e32 \
-            syslinux/efi32/**/*.c32 \
-            ./pxelinux/efi32
-
-          mkdir -p pxelinux/efi64
-          mv syslinux/efi64/efi/syslinux.efi \
-            syslinux/efi64/**/ldlinux.e64 \
-            syslinux/efi64/**/*.c32 \
-            ./pxelinux/efi64
+          git submodule update --init syslinux
+          cd syslinux
+          sed -i~ 's/git/https/' .gitmodules
+          git submodule update --init
+        env:
+          # The main syslinux repos seems to be geoblocked in the US
+          HTTP_PROXY: 213.32.85.26:3128
+          HTTPS_PROXY: 213.32.85.26:3128
+      - name: Configure Syslinux
+        working-directory: ./syslinux
+        id: syslinux
+        run: |
+          shopt -s nullglob
+          echo "commit=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+          echo "" | git apply --allow-empty "$GITHUB_WORKSPACE"/patches/pxelinux/*.patch
+      - name: Setup Toolchain
+        # See https://askubuntu.com/a/1437819
+        run: |
+          echo "set man-db/auto-update false" | sudo debconf-communicate
+          sudo dpkg-reconfigure man-db
+          sudo apt-get update && sudo apt-get install --yes nasm uuid-dev
+      - name: Setup Cache
+        uses: actions/cache@v4
+        with:
+          path: syslinux/${{ matrix.target }}
+          key: syslinux-${{ matrix.target }}-${{ steps.syslinux.outputs.commit }}
+      - name: Build PXELINUX
+        working-directory: syslinux
+        run: |
+          make -e -j$(nproc) "$TARGET"
+          make "$TARGET" netinstall TFTPBOOT="${{ github.workspace }}/pxelinux"
+        env:
+          CC: gcc -fcommon
+          TARGET: ${{ matrix.target }}
+          TFTPBOOT: ${{ github.workspace }}/pxelinux
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.artifact-name }}
+          name: ${{ inputs.artifact-prefix }}${{ matrix.target }}
           path: |
             pxelinux/
             .keep-directory-structure

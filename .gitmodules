@@ -1,7 +1,13 @@
 [submodule "ipxe"]
 	path = ipxe
 	url = https://github.com/ipxe/ipxe.git
+	# See https://github.com/ipxe/ipxe/discussions/679#discussioncomment-5214424
+	branch = master
 [submodule "memtest"]
 	path = memtest
 	url = https://github.com/memtest86plus/memtest86plus
 	branch = v7.20
+[submodule "syslinux"]
+	path = syslinux
+	url = https://repo.or.cz/syslinux.git
+    branch = syslinux-6.04-pre3
