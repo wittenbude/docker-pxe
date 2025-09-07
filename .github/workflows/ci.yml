@@ -34,5 +34,5 @@ jobs:
     with:
       platforms: linux/arm64,linux/amd64
       artifact-pattern: "*"
-      path: .
+      path: tftp
       image: wittenbude/pxe

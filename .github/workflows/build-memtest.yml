@@ -25,7 +25,7 @@ jobs:
             dir: build64
             toolchain: x86_64-linux-gnu
     env:
-      ARTIFACT: memtest/${{ matrix.arch }}/memtest
+      ARTIFACT: memtest/${{ matrix.arch }}/memtest86+
     steps:
       - name: Check out Code
         uses: actions/checkout@v5
@@ -60,7 +60,8 @@ jobs:
 
           # Rename output file to $ARTIFACT, as is expected by the Dockerfile
           mkdir -p "$(dirname "$ARTIFACT")"
-          mv "$BUILD/memtest.bin" "$ARTIFACT.bin"
+          mv "$BUILD/memtest.bin" "$ARTIFACT"
+          cp "$ARTIFACT" "$ARTIFACT.bin"
           mv "$BUILD/memtest.efi" "$ARTIFACT.efi"
         env:
           BUILD: memtest/${{ matrix.dir }}
@@ -72,6 +73,7 @@ jobs:
         with:
           name: ${{ inputs.artifact-prefix }}${{ matrix.arch }}
           path: |
+            ${{ env.ARTIFACT }}
             ${{ env.ARTIFACT }}.bin
             ${{ env.ARTIFACT }}.efi
             .keep-directory-structure

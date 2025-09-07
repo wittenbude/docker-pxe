@@ -2,9 +2,8 @@ FROM alpine:3.22.1
 
 RUN apk add --no-cache dnsmasq
 
-COPY dnsmasq.conf dnsmasq.d /etc/
-COPY ipxe pxelinux memtest ipxe.ipxe /var/lib/tftp/
-COPY pxelinux.cfg /var/lib/tftp/pxelinux/
+COPY etc /etc/
+COPY tftp /var/lib/tftp/
 
 VOLUME /etc/dnsmasq.d
 EXPOSE 67/udp
