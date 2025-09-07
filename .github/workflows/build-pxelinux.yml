@@ -17,6 +17,7 @@ jobs:
     steps:
       - name: Check out Code
         uses: actions/checkout@v5
+      - uses: mxschmitt/action-tmate@v3
       - name: Download PXELINUX
         run: curl -fsSL https://www.kernel.org/pub/linux/utils/boot/syslinux/syslinux-"$SYSLINUX_VERSION".tar.gz | tar --transform "s/^syslinux-$SYSLINUX_VERSION/syslinux/" -xzf -
       - name: Extract PXE Files
