@@ -28,7 +28,7 @@ jobs:
       ARTIFACT: memtest/${{ matrix.arch }}/memtest86+
     steps:
       - name: Check out Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Check out iPXE
         run: git submodule update --init memtest
       - name: Setup Toolchain
