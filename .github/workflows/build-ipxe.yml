@@ -76,7 +76,7 @@ jobs:
         env:
           PACKAGE: gcc-${{ matrix.toolchain }}
       - name: Setup Cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ipxe/src/bin-${{ matrix.arch }}-${{ matrix.platform }}${{ matrix.sb }}
           key: ipxe-${{ matrix.arch }}-${{ matrix.platform }}${{ matrix.sb }}-${{ steps.ipxe.outputs.commit }}
