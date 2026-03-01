@@ -91,7 +91,7 @@ jobs:
           BUILD: ipxe/src
           CROSS: ${{ matrix.toolchain }}-
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ inputs.artifact-prefix }}${{ matrix.arch }}-${{ matrix.driver }}${{ matrix.sb }}.${{ matrix.extension }}
           path: |

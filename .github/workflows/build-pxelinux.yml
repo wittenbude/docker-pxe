@@ -61,7 +61,7 @@ jobs:
           TARGET: ${{ matrix.target }}
           TFTPBOOT: ${{ github.workspace }}/pxelinux
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ inputs.artifact-prefix }}${{ matrix.target }}
           path: |
