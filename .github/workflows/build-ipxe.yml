@@ -56,7 +56,7 @@ jobs:
       ARTIFACT: ipxe/${{ matrix.arch }}/${{ matrix.driver }}${{ matrix.sb }}.${{ matrix.extension }}
     steps:
       - name: Check out Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
       - name: Check out iPXE
         run: git submodule update --init ipxe
       - # We need to unshallow iPXE for version number calculation
