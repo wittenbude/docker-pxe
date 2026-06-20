@@ -22,7 +22,7 @@ jobs:
             artifacts: efi/syslinux.efi **/ldlinux.e64
     steps:
       - name: Check out Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
       - name: Check out Syslinux
         run: |
           git submodule update --init syslinux
