@@ -50,7 +50,7 @@ jobs:
           echo "commit=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
           echo "" | git apply --allow-empty "$GITHUB_WORKSPACE"/patches/memtest/*.patch
       - name: Setup Cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: memtest/${{ matrix.dir }}
           key: memtest-${{ matrix.arch }}-${{ steps.memtest.outputs.commit }}
